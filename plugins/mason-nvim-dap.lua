@@ -10,26 +10,6 @@ return {
                 require('mason-nvim-dap').default_setup(config)
             end,
             coreclr = function(config)
-                -- local function get_dll()
-                --     return coroutine.create(function(dap_run_co)
-                --         local items = vim.fn.globpath(vim.fn.getcwd(), '**/bin/Debug/**/*.dll', 0, 1)
-                --         local opts = {
-                --             format_item = function(path)
-                --                 return vim.fn.fnamemodify(path, ':t')
-                --             end,
-                --         }
-                --         local function cont(choice)
-                --             if choice == nil then
-                --                 return nil
-                --             else
-                --                 coroutine.resume(dap_run_co, choice)
-                --             end
-                --         end
-                --
-                --         vim.ui.select(items, opts, cont)
-                --     end)
-                -- end
-
                 vim.g.dotnet_build_project = function()
                     local default_path = vim.fn.getcwd() .. '/'
                     if vim.g['dotnet_last_proj_path'] ~= nil then
@@ -64,7 +44,7 @@ return {
                     return vim.g['dotnet_last_dll_path']
                 end
 
-                local configp = {
+                config.configurations = {
                     {
                         type = "coreclr",
                         name = "launch - netcoredbg",
@@ -75,14 +55,10 @@ return {
                             end
                             return vim.g.dotnet_get_dll_path()
                         end,
-                    },
+                    }
                 }
 
-                local dap = require('dap')
-
-                dap.adapters.coreclr = config.adapters
-                dap.configurations.cs = configp
-                dap.configurations.fsharp = configp
+                require('mason-nvim-dap').default_setup(config)
             end,
         }
     }
