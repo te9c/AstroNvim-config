@@ -50,8 +50,13 @@ return {
     },
     -- enable servers that you already have installed without mason
     servers = {
-      -- "pyright"
+      -- "omnisharp",
     },
+    config = {
+      -- omnisharp = {
+      --   cmd = "omnisharp",
+      -- }
+    }
   },
 
   -- Configure require("lazy").setup() options
@@ -65,27 +70,6 @@ return {
     },
   },
 
-  -- why is this shit doesnt work
-  -- dap = {
-  --   adapters = {
-  --     coreclr = {
-  --       type = "executable",
-  --       command = "netcoredbg",
-  --       args = { "--interpreter=vscode" },
-  --     },
-  --   },
-  --   configurations = {
-  --     cs = {
-  --       type = "coreclr",
-  --       name = "launch - netcoredbg",
-  --       request = "launch",
-  --       program = function()
-  --         return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug', 'file')
-  --       end,
-  --     },
-  --   },
-  -- },
-
   -- This function is run last and is a good place to configuring
   -- augroups/autocommands and custom filetypes also this just pure lua so
   -- anything that doesn't fit in the normal config locations above can go here
@@ -95,11 +79,24 @@ return {
       group = vim.api.nvim_create_augroup("OmnisharpHook", {}),
       callback = function(ev)
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
-        if client.name == "omnisharp" then
-          client.server_capabilities.semanticTokensProvider = nil
+        local function toSnakeCase(str)
+          return string.gsub(str, "%s*[- ]%s*", "_")
+        end
+
+        if client.name == 'omnisharp' then
+          local tokenModifiers = client.server_capabilities.semanticTokensProvider.legend.tokenModifiers
+          for i, v in ipairs(tokenModifiers) do
+            tokenModifiers[i] = toSnakeCase(v)
+          end
+          local tokenTypes = client.server_capabilities.semanticTokensProvider.legend.tokenTypes
+          for i, v in ipairs(tokenTypes) do
+            tokenTypes[i] = toSnakeCase(v)
+          end
         end
       end,
     })
+
+    require('dap.ext.vscode').load_launchjs()
 
     -- Set up custom filetypes
     -- vim.filetype.add {
