@@ -96,19 +96,34 @@ return {
       end,
     })
 
-    require('dap.ext.vscode').load_launchjs()
+    local CompileAndRunCpp = function()
+      local stripExtension = function(path)
+        local file_name = path:match("[^/]*.cpp$")
+        return file_name:sub(0, #file_name - 4)
+      end
 
-    -- Set up custom filetypes
-    -- vim.filetype.add {
-    --   extension = {
-    --     foo = "fooscript",
-    --   },
-    --   filename = {
-    --     ["Foofile"] = "fooscript",
-    --   },
-    --   pattern = {
-    --     ["~/%.config/foo/.*"] = "fooscript",
-    --   },
-    -- }
+      local compilatorCommand = "g++"
+      local compilationArgs = { "-std=c++17" }
+
+      local cmd = compilatorCommand .. ' '
+      for i, v in pairs(compilationArgs) do
+        cmd = cmd .. v .. ' '
+      end
+      local path = vim.api.nvim_buf_get_name(0)
+      cmd = cmd .. path .. ' -o ' .. stripExtension(path) .. ' && ./' .. stripExtension(path)
+
+      -- local run = Terminal:new({ cmd = cmd, direction = 'float',})
+      vim.cmd('TermExec cmd="' .. cmd .. '"')
+    end
+
+    vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+      pattern = { "*.cpp" },
+      desc = "Compile and run cpp file",
+      callback = function()
+        vim.keymap.set("n", "<leader>tr", CompileAndRunCpp, { desc = "ToggleTerm compile and run" })
+      end
+    })
+
+    require('dap.ext.vscode').load_launchjs()
   end,
 }
