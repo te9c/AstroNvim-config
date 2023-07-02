@@ -2,7 +2,9 @@
     "setup": {
         "prefix": ["setup", "init"],
         "body": [
-            "#include <bits/stdc++.h",
+            "#include <bits/stdc++.h>",
+            "",
+            "#define ll long long;",
             "",
             "using namespace std;",
             "",
@@ -33,6 +35,8 @@
         "prefix": ["atcoder"],
         "body": [
             "#include <bits/stdc++.h>",
+            "",
+            "#define ll long long;",
             "",
             "using namespace std;",
             "",
