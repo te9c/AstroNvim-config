@@ -78,24 +78,81 @@ return {
   polish = function()
     local config = {
       cmd = { "/usr/local/bin/OmniSharp-stdio" },
+      enable_roslyn_analyzers = true,
+      organize_imports_on_format = true,
+      enable_import_completion = true,
+      handlers = {
+        ["textDocument/definition"] = require("omnisharp_extended").handler,
+      },
     }
     require("lspconfig").omnisharp.setup(config)
 
-    local CompileAndRunCpp = function()
-      local stripExtension = function(path)
-        local file_name = path:match "[^/]*.cpp$"
-        return file_name:sub(0, #file_name - 4)
-      end
+    local dap = require "dap"
+    dap.adapters.cppdbg = {
+      id = "cppdbg",
+      type = "executable",
+      command = "/usr/local/lib/cpptools/extension/debugAdapters/bin/OpenDebugAD7",
+    }
+    dap.configurations.cpp = {
+      {
+        name = "Launch file",
+        type = "cppdbg",
+        request = "launch",
+        program = function() return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file") end,
+        cwd = "${workspaceFolder}",
+        stopAtEntry = true,
+        -- externalConsole = true,
+        -- console = "integratedTerminal",
+        setupCommands = {
+          {
+            text = "-enable-pretty-printing",
+            description = "enable pretty printing",
+            ignoreFailures = false,
+          },
+        },
+      },
+      {
+        name = "Attach to gdbserver :1234",
+        type = "cppdbg",
+        request = "launch",
+        MIMode = "gdb",
+        miDebuggerServerAddress = "localhost:1234",
+        miDebuggerPath = "/usr/bin/gdb",
+        console = "integratedTerminal",
+        cwd = "${workspaceFolder}",
+        program = function() return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file") end,
+        setupCommands = {
+          {
+            text = "-enable-pretty-printing",
+            description = "enable pretty printing",
+            ignoreFailures = false,
+          },
+        },
+      },
+    }
 
-      local compilatorCommand = "g++"
-      local compilationArgs = { "-std=c++17" }
+    local stripExtension = function(path) return path:sub(0, #path - 4) end
 
+    local compilatorCommand = "g++"
+    local compilationArgs = { "-g" }
+
+    local Compile = function()
       local cmd = compilatorCommand .. " "
-      for i, v in pairs(compilationArgs) do
+      for _, v in pairs(compilationArgs) do
         cmd = cmd .. v .. " "
       end
       local path = vim.api.nvim_buf_get_name(0)
-      cmd = cmd .. path .. " -o " .. stripExtension(path) .. " && ./" .. stripExtension(path)
+      cmd = cmd .. path .. " -o " .. stripExtension(path)
+      vim.cmd('TermExec cmd="' .. cmd .. '"')
+    end
+
+    local CompileAndRunCpp = function()
+      local cmd = compilatorCommand .. " "
+      for _, v in pairs(compilationArgs) do
+        cmd = cmd .. v .. " "
+      end
+      local path = vim.api.nvim_buf_get_name(0)
+      cmd = cmd .. path .. " -o " .. stripExtension(path) .. " && " .. stripExtension(path)
 
       -- local run = Terminal:new({ cmd = cmd, direction = 'float',})
       vim.cmd('TermExec cmd="' .. cmd .. '"')
@@ -107,6 +164,12 @@ return {
       callback = function()
         vim.keymap.set("n", "<leader>tr", CompileAndRunCpp, { desc = "ToggleTerm compile and run" })
       end,
+    })
+
+    vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+      pattern = { "*.cpp" },
+      desc = "Compile cpp file",
+      callback = function() vim.keymap.set("n", "<leader>tc", Compile, { desc = "ToggleTerm compile" }) end,
     })
 
     require("dap.ext.vscode").load_launchjs()
