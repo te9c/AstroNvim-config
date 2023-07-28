@@ -20,5 +20,5 @@ return {
     diagnostics_mode = 3,
     icons_enabled = true,
     ui_notifications_enabled = true,
-  }
+  },
 }

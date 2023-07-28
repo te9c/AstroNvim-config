@@ -10,5 +10,6 @@ return {
       ":%y+<cr><cr>",
       desc = "Copy all lines in current buffer to clipboard.",
     },
+    -- ["gd"] = { "lua vim.lsp.buf.definition()<cr>", desc = "Go to definition" },
   },
 }
