@@ -12,30 +12,43 @@
 -- then change gd to vim.lsp.buf.defenition()
 
 -- C++ Compile and run
-local stripExtension = function(path)
+function StripExtension(path)
     return path:sub(0, #path - 4)
 end
 
+function GetFileName(url)
+    return url:match("^.+/(.+)$")
+end
+
 local compilatorCommand = "g++"
-local compilationArgs = { "-g" }
+local compilationArgs = {
+    "-g",
+    "-Wall",
+    "-Wextra",
+    "-std=gnu++17",
+}
+-- local outputPath = "/tmp/" .. GetFileName(StripExtension(vim.api.nvim_buf_get_name(0)))
+-- local outputPath = StripExtension(vim.api.nvim_buf_get_name(0))
 
 local Compile = function()
+    local outputPath = StripExtension(vim.api.nvim_buf_get_name(0))
     local cmd = compilatorCommand .. " "
     for _, v in pairs(compilationArgs) do
         cmd = cmd .. v .. " "
     end
     local path = vim.api.nvim_buf_get_name(0)
-    cmd = cmd .. path .. " -o " .. stripExtension(path)
+    cmd = cmd .. path .. " -o " .. outputPath
     vim.cmd('TermExec cmd="' .. cmd .. '"')
 end
 
 local CompileAndRunCpp = function()
+    local outputPath = StripExtension(vim.api.nvim_buf_get_name(0))
     local cmd = compilatorCommand .. " "
     for _, v in pairs(compilationArgs) do
         cmd = cmd .. v .. " "
     end
     local path = vim.api.nvim_buf_get_name(0)
-    cmd = cmd .. path .. " -o " .. stripExtension(path) .. " && " .. stripExtension(path)
+    cmd = cmd .. path .. " -o " .. outputPath .. " && " .. outputPath
 
     -- local run = Terminal:new({ cmd = cmd, direction = 'float',})
     vim.cmd('TermExec cmd="' .. cmd .. '"')
