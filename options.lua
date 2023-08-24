@@ -11,6 +11,7 @@ return {
         listchars = "trail:·",
         tabstop = 4,
         shiftwidth = 4,
+        mouse = "",
     },
     g = {
         mapleader = " ",

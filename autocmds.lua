@@ -27,6 +27,8 @@ local compilationArgs = {
     "-Wextra",
     "-std=gnu++17",
 }
+local direction = "float"
+
 -- local outputPath = "/tmp/" .. GetFileName(StripExtension(vim.api.nvim_buf_get_name(0)))
 -- local outputPath = StripExtension(vim.api.nvim_buf_get_name(0))
 
@@ -38,7 +40,7 @@ local Compile = function()
     end
     local path = vim.api.nvim_buf_get_name(0)
     cmd = cmd .. path .. " -o " .. outputPath
-    vim.cmd('TermExec cmd="' .. cmd .. '"')
+    vim.cmd('TermExec cmd="' .. cmd .. '" direction="' .. direction .. '"')
 end
 
 local CompileAndRunCpp = function()
@@ -51,7 +53,7 @@ local CompileAndRunCpp = function()
     cmd = cmd .. path .. " -o " .. outputPath .. " && " .. outputPath
 
     -- local run = Terminal:new({ cmd = cmd, direction = 'float',})
-    vim.cmd('TermExec cmd="' .. cmd .. '"')
+    vim.cmd('TermExec cmd="' .. cmd .. '" direction="' .. direction .. '"')
 end
 
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
