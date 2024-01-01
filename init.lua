@@ -1,7 +1,10 @@
 return {
     updater = require("user.updater"),
 
-    colorscheme = "astrodark",
+    colorscheme = "gruvbox",
+    -- colorscheme = "desert",
+    -- colorscheme = "catppuccin",
+    -- colorscheme = "astrodark",
 
     -- Diagnostics configuration (for vim.diagnostics.config({...})) when diagnostics are on
     diagnostics = {
@@ -27,5 +30,13 @@ return {
     -- anything that doesn't fit in the normal config locations above can go here
     polish = function()
         require("user.autocmds")
+
+        require("notify").setup({
+            background_colour = "#1a1b26"
+        })
+
+        -- Try Hard features:
+        vim.g.diagnostics_mode = 0
+        vim.g.cmp_enabled = false
     end,
 }

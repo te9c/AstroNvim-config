@@ -1,6 +1,6 @@
 return {
     opt = {
-        -- relativenumber = false,
+        relativenumber = false,
         number = true,
         spell = false,
         signcolumn = "auto",
@@ -12,6 +12,8 @@ return {
         tabstop = 4,
         shiftwidth = 4,
         mouse = "",
+        scrolloff=5,
+        termguicolors = true
     },
     g = {
         mapleader = " ",

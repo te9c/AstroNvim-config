@@ -8,6 +8,8 @@ return {
 
         vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 
-        require("toggleterm").setup({})
+        require("toggleterm").setup({
+            shell = "/bin/bash",
+        })
     end,
 }

@@ -25,7 +25,7 @@ local compilationArgs = {
     "-g",
     "-Wall",
     "-Wextra",
-    "-std=gnu++17",
+    "-std=c++2a",
 }
 local direction = "float"
 
