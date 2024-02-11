@@ -1,9 +1,9 @@
 return {
     opt = {
-        relativenumber = false,
+        relativenumber = true,
         number = true,
         spell = false,
-        signcolumn = "auto",
+        signcolumn = "yes",
         wrap = false,
         autoindent = true,
         compatible = false,
@@ -11,7 +11,7 @@ return {
         listchars = "trail:·",
         tabstop = 4,
         shiftwidth = 4,
-        mouse = "",
+        -- mouse = "",
         scrolloff=5,
         termguicolors = true
     },

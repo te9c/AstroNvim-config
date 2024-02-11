@@ -1,7 +1,7 @@
 return {
     updater = require("user.updater"),
 
-    colorscheme = "gruvbox",
+    colorscheme = "moonfly",
     -- colorscheme = "desert",
     -- colorscheme = "catppuccin",
     -- colorscheme = "astrodark",
